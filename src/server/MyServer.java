@@ -65,7 +65,7 @@ public class MyServer {
     }
 
     public synchronized void broadcastClientsList() {
-        StringBuilder sb = new StringBuilder("/clients ");
+        StringBuilder sb = new StringBuilder("В чате: ");
         for (ClientHandler o : clients) {
             sb.append(o.getName() + " ");
         }

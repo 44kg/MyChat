@@ -1,6 +1,7 @@
 package client;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,10 +21,13 @@ public class Window extends JFrame {
 
         setLayout(getStandardLayout());
         setBounds(100, 100, 600, 500);
+        setMinimumSize(new Dimension(300, 200));
 
         textArea = new JTextArea();
+
         textArea.setEditable(false);
         textArea.setFont(new Font("Courier", Font.BOLD, 10));
+        textArea.setLineWrap(true);
 //        textArea.setBackground(new Color(45, 55, 70, 45));
 
         JPanel panel = new JPanel(getStandardLayout());
@@ -64,7 +68,11 @@ public class Window extends JFrame {
         add(getPanel(), BorderLayout.EAST);
         add(getPanel(), BorderLayout.WEST);
         add(textArea, BorderLayout.CENTER);
+        add(new JScrollPane(textArea));
         add(panel, BorderLayout.SOUTH);
+
+        DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         initAuthorizationDialog();
 
@@ -94,6 +102,8 @@ public class Window extends JFrame {
                     authorization.sendMessage();
                 }
                 else {
+                    authDialog.setBounds(getX() + getWidth() / 2 - 105, getY() + getHeight() / 2 - 85,
+                            210, 175);
                     authDialog.setVisible(true);
                 }
             }
