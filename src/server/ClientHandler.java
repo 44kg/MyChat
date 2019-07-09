@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class ClientHandler {
     private MyServer myServer;
@@ -52,6 +53,22 @@ public class ClientHandler {
                     }
                 } else {
                     sendMsg("Неверные логин/пароль");
+                }
+            }
+            else if (str.startsWith("/reg")) {
+                String[] parts = str.split("\\s");
+                if (myServer.getAuthService().checkLogin(parts[1])) {
+                    sendMsg("Логин занят");
+                }
+                else {
+                    myServer.getAuthService().start();
+                    try {
+                        myServer.getAuthService().addUserInDB(parts[1], parts[2]);
+                        sendMsg("Пользователь зарегестрирован");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    myServer.getAuthService().stop();
                 }
             }
         }

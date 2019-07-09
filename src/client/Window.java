@@ -10,9 +10,16 @@ public class Window extends JFrame {
     private JTextArea textArea;
     private JTextField textField;
     private JButton pushButton;
+
     private JDialog authDialog;
     private JTextField loginField;
     private JPasswordField passwordField;
+
+    private JDialog regDialog;
+    private JTextField regLoginField;
+    private JPasswordField regPasswordField;
+    private JPasswordField confirmPasswordField;
+
     private Authorization authorization;
 
     public Window() throws HeadlessException{
@@ -60,6 +67,19 @@ public class Window extends JFrame {
                 System.exit(0);
             }
         });
+        JMenuItem itemReg = new JMenuItem("Регистрация");
+        itemReg.setFont(new Font("Courier", Font.BOLD, 10));
+        itemReg.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!authorization.getAuthorized()) {
+                    regDialog.setBounds(getX() + getWidth() / 2 - 105, getY() + getHeight() / 2 - 85,
+                            210, 175);
+                    regDialog.setVisible(true);
+                }
+            }
+        });
+        options.add(itemReg);
         options.add(itemExit);
         mainMenu.add(options);
 
@@ -75,6 +95,7 @@ public class Window extends JFrame {
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         initAuthorizationDialog();
+        initRegistrationDialog();
 
         setVisible(true);
         textField.grabFocus();
@@ -142,6 +163,38 @@ public class Window extends JFrame {
         authDialog.add(authButton);
     }
 
+    private void initRegistrationDialog() {
+        regDialog = new JDialog();
+        regDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        regDialog.setTitle("Регистрация");
+        regDialog.setBounds(this.getX() + this.getWidth() / 2 - 105, this.getY() + this.getHeight() / 2 - 85,
+                210, 175);
+        regDialog.setResizable(false);
+        regDialog.setLayout(new FlowLayout());
+
+        JLabel loginLabel = new JLabel("          Логин:          ");
+        regLoginField = new JTextField(15);
+
+        JLabel passwordLabel = new JLabel("          Пароль:          ");
+        regPasswordField = new JPasswordField(15);
+
+        JButton regButton = new JButton("Регистрация");
+
+        regButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                authorization.onRegClick();
+                regDialog.setVisible(false);
+            }
+        });
+
+        regDialog.add(loginLabel);
+        regDialog.add(regLoginField);
+        regDialog.add(passwordLabel);
+        regDialog.add(regPasswordField);
+        regDialog.add(regButton);
+    }
+
     public JTextArea getTextArea() {
         return textArea;
     }
@@ -156,6 +209,14 @@ public class Window extends JFrame {
 
     public JPasswordField getPasswordField() {
         return passwordField;
+    }
+
+    public JTextField getRegLoginField() {
+        return regLoginField;
+    }
+
+    public JPasswordField getRegPasswordField() {
+        return regPasswordField;
     }
 
     public JButton getPushButton() {

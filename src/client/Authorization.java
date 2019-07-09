@@ -99,6 +99,18 @@ public class Authorization {
         }
     }
 
+    public void onRegClick() {
+        if (socket == null || socket.isClosed()) {
+            openConnection();
+        }
+        try {
+            out.writeUTF("/reg " + window.getRegLoginField().getText() + " " + window.getRegPasswordField().getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void sendMessage() {
         if (!window.getTextField().getText().trim().isEmpty()) {
             try {

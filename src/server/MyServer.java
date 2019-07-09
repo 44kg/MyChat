@@ -5,12 +5,13 @@ import utils.Properties;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyServer {
     private List<ClientHandler> clients;
-    private AuthService authService;
+    private BaseAuthService authService;
 
 
 
@@ -18,6 +19,12 @@ public class MyServer {
         try (ServerSocket server = new ServerSocket(Properties.PORT)) {
             authService = new BaseAuthService();
             authService.start();
+            try {
+                authService.loadUsers();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            authService.stop();
             clients = new ArrayList<>();
             while (true) {
                 System.out.println("Сервер ожидает подключения");
@@ -34,7 +41,7 @@ public class MyServer {
         }
     }
 
-    public AuthService getAuthService() {
+    public BaseAuthService getAuthService() {
         return authService;
     }
 
