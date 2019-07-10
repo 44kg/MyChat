@@ -47,7 +47,12 @@ public class Authorization {
                         }
                         while (true) {
                             String strFromServer = in.readUTF();
-                            window.getTextArea().append(strFromServer + "\n");
+                            if (strFromServer.startsWith("/newnickok ")) {
+                                myNick = strFromServer.split("\\s")[1];
+                            }
+                            else {
+                                window.getTextArea().append(strFromServer + "\n");
+                            }
                         }
                     }
                     catch (IOException e) {
@@ -94,6 +99,14 @@ public class Authorization {
         }
         try {
             out.writeUTF( "/auth " + window.getLoginField().getText() + " " + window.getPasswordField().getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onChangeNickClick() {
+        try {
+            out.writeUTF("/newnick " + window.getNewNickField().getText() + " " + myNick);
         } catch (Exception e) {
             e.printStackTrace();
         }

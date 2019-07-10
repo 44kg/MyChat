@@ -13,6 +13,7 @@ public class ClientHandler {
     private DataOutputStream out;
 
     private String name;
+    private String login;
 
     public ClientHandler(MyServer myServer, Socket socket) {
         try {
@@ -45,6 +46,7 @@ public class ClientHandler {
                     if (!myServer.isNickBusy(nick)) {
                         sendMsg("/authok " + nick);
                         name = nick;
+                        login = parts[1];
                         myServer.broadcastMsg(name + " зашел в чат");
                         myServer.subscribe(this);
                         return;
@@ -82,6 +84,19 @@ public class ClientHandler {
                 String nick = tokens[1];
                 String msg = str.substring(4 + nick.length());
                 myServer.sendMsgToClient(this, nick, msg);
+            }
+            else if(str.startsWith("/newnick ")) {
+                String[] tokens = str.split("\\s");
+                name = tokens[1];
+                myServer.getAuthService().start();
+                try {
+                    myServer.getAuthService().changeNickInDB(login, name);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                myServer.getAuthService().stop();
+                sendMsg("/newnickok " + name);
+                sendMsg("Новый ник: " + name);
             }
             else {
                 myServer.broadcastMsg(name + ": " + str);

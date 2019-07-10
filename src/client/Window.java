@@ -20,6 +20,9 @@ public class Window extends JFrame {
     private JPasswordField regPasswordField;
     private JPasswordField confirmPasswordField;
 
+    private JDialog changeNickDialog;
+    private JTextField newNickField;
+
     private Authorization authorization;
 
     public Window() throws HeadlessException{
@@ -79,7 +82,21 @@ public class Window extends JFrame {
                 }
             }
         });
+        JMenuItem itemChangeNick = new JMenuItem("Сиенить ник");
+        itemChangeNick.setFont(new Font("Courier", Font.BOLD, 10));
+        itemChangeNick.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (authorization.getAuthorized()) {
+                    changeNickDialog.setBounds(getX() + getWidth() / 2 - 105, getY() + getHeight() / 2 - 85,
+                            210, 175);
+                    changeNickDialog.setVisible(true);
+                }
+            }
+        });
+
         options.add(itemReg);
+        options.add(itemChangeNick);
         options.add(itemExit);
         mainMenu.add(options);
 
@@ -96,6 +113,7 @@ public class Window extends JFrame {
 
         initAuthorizationDialog();
         initRegistrationDialog();
+        initChangeNickDialog();
 
         setVisible(true);
         textField.grabFocus();
@@ -195,6 +213,33 @@ public class Window extends JFrame {
         regDialog.add(regButton);
     }
 
+    private void initChangeNickDialog() {
+        changeNickDialog = new JDialog();
+        changeNickDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        changeNickDialog.setTitle("Смена ника");
+        changeNickDialog.setBounds(this.getX() + this.getWidth() / 2 - 105, this.getY() + this.getHeight() / 2 - 85,
+                210, 175);
+        changeNickDialog.setResizable(false);
+        changeNickDialog.setLayout(new FlowLayout());
+
+        JLabel changeNickLabel = new JLabel("          Новый ник:          ");
+        newNickField = new JTextField(15);
+
+        JButton newNickButton = new JButton("Сменить");
+
+        newNickButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                authorization.onChangeNickClick();
+                changeNickDialog.setVisible(false);
+            }
+        });
+
+        changeNickDialog.add(changeNickLabel);
+        changeNickDialog.add(newNickField);
+        changeNickDialog.add(newNickButton);
+    }
+
     public JTextArea getTextArea() {
         return textArea;
     }
@@ -217,6 +262,10 @@ public class Window extends JFrame {
 
     public JPasswordField getRegPasswordField() {
         return regPasswordField;
+    }
+
+    public JTextField getNewNickField() {
+        return newNickField;
     }
 
     public JButton getPushButton() {

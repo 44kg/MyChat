@@ -61,6 +61,13 @@ public class BaseAuthService implements AuthService {
         return null;
     }
 
+//    public String getLoginByNickPass(String nick, String pass) {
+//        for (Entry o : entries) {
+//            if (o.nick.equals(nick) && o.pass.equals(pass)) return o.login;
+//        }
+//        return null;
+//    }
+
     public boolean checkLogin(String login) {
         for (Entry o : entries) {
             if (o.login.equals(login)) return true;
@@ -85,6 +92,14 @@ public class BaseAuthService implements AuthService {
             statement.executeUpdate();
         }
         entries.add(new Entry(login, password, login));
+    }
+
+    public void changeNickInDB(String login, String newNick) throws SQLException{
+        try (PreparedStatement statement = con.prepareStatement("UPDATE `mychatusers`.`users` SET `nick` = ? WHERE (`login` = ?)")) {
+            statement.setString(1, newNick);
+            statement.setString(2, login);
+            statement.executeUpdate();
+        }
     }
 }
 
