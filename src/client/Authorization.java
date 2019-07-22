@@ -7,12 +7,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Authorization {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private boolean authorized;
+    private UserChatHistory history;
 
     private String myNick;
 
@@ -21,6 +23,7 @@ public class Authorization {
 
     public Authorization(Window window) {
         this.window = window;
+
         socket = null;
         myNick = "";
         authorized = false;
@@ -38,9 +41,22 @@ public class Authorization {
                         while (true) {
                             String str = in.readUTF();
                             if (str.startsWith("/authok ")) {
-                                myNick = str.split("\\s")[1];
+                                String[] tokens = str.split("\\s");
+                                myNick = tokens[1];
                                 authorized = true;
+                                history = new UserChatHistory(tokens[2]);
                                 window.getPushButton().setText("Отправить");
+                                ArrayList<String> arr = history.readHistory();
+                                if (arr.size() > 100) {
+                                    for (int i = arr.size() - 100; i < arr.size(); i++) {
+                                        window.getTextArea().append(arr.get(i) + "\n");
+                                    }
+                                }
+                                else {
+                                    for (String o : arr) {
+                                        window.getTextArea().append(o + "\n");
+                                    }
+                                }
                                 break;
                             }
                             window.getTextArea().append(str + "\n");
@@ -52,6 +68,7 @@ public class Authorization {
                             }
                             else {
                                 window.getTextArea().append(strFromServer + "\n");
+                                history.saveMessage(strFromServer);
                             }
                         }
                     }

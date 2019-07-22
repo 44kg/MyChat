@@ -44,9 +44,9 @@ public class ClientHandler {
                 String nick = myServer.getAuthService().getNickByLoginPass(parts[1], parts[2]);
                 if (nick != null) {
                     if (!myServer.isNickBusy(nick)) {
-                        sendMsg("/authok " + nick);
                         name = nick;
                         login = parts[1];
+                        sendMsg("/authok " + name + " " + login);
                         myServer.broadcastMsg(name + " зашел в чат");
                         myServer.subscribe(this);
                         return;
